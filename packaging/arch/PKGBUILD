@@ -31,7 +31,9 @@ check() {
 package() {
   cd "${pkgname}-${pkgver}"
   install -Dm755 "target/release/${pkgname}" "${pkgdir}/usr/bin/${pkgname}"
-  install -Dm644 config.toml "${pkgdir}/etc/xdg/${pkgname}/config.toml"
+  # Пример конфига — как .pacnew: существующий файл не конфликтует с пакетом,
+  # а встроенные значения программы повторяют эти же настройки.
+  install -Dm644 config.toml "${pkgdir}/etc/xdg/${pkgname}/config.toml.example"
   install -Dm644 "${pkgname}.desktop" "${pkgdir}/etc/xdg/autostart/${pkgname}.desktop"
   install -Dm644 LICENSE "${pkgdir}/usr/share/licenses/${pkgname}/LICENSE"
   install -Dm644 README.md "${pkgdir}/usr/share/doc/${pkgname}/README.md"

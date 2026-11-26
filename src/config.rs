@@ -1,17 +1,21 @@
-//! Конфигурация: системный файл `tray-idle-inhibitor/config.toml` из
-//! `XDG_CONFIG_DIRS` (обычно `/etc/xdg`) и пользовательский из
-//! `XDG_CONFIG_HOME` (обычно `~/.config`).
+//! Конфигурация: три слоя в порядке возрастания приоритета — встроенные
+//! значения, системный файл из `XDG_CONFIG_DIRS` (обычно `/etc/xdg`) и
+//! пользовательский из `XDG_CONFIG_HOME` (обычно `~/.config`).
 //!
-//! Пользовательский файл переопределяет только указанные в нём ключи,
-//! остальные берутся из системного или из значений по умолчанию. Флаги
-//! командной строки сильнее конфига. Файл читается один раз при запуске.
+//! Встроенные значения повторяют пример `config.toml`, поэтому пакет не
+//! ставит файл в `/etc/xdg`: без него программа работает так же, а обновление
+//! не конфликтует с конфигом, созданным вручную. Если конфиг уже лежит в
+//! `/etc/xdg` и не принадлежит пакету, программа говорит об этом в stderr и
+//! читает его как обычно. Пользовательский файл переопределяет только
+//! указанные в нём ключи. Флаги командной строки сильнее конфига. Файл
+//! читается один раз при запуске.
 
 use std::path::{Path, PathBuf};
 
 const APP: &str = "tray-idle-inhibitor";
 const DEFAULT_INTERVAL_SECS: u64 = 5;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
     pub auto: bool,
     pub start_on: bool,
@@ -19,7 +23,7 @@ pub struct Config {
     pub color: Color,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Color {
     pub mode: ColorMode,
     /// Имя темы LXQt для `mode = "theme"`; пусто — тема из `lxqt.conf`.
@@ -115,6 +119,38 @@ impl Config {
     }
 }
 
+/// Отличие системного файла от встроенных значений: молчаливое
+/// расхождение — самая частая причина «конфиг не подхватился».
+fn warn_if_differs_from_defaults(cfg: &Config, path: &Path) {
+    let defaults = Config::default();
+    let mut diff: Vec<String> = Vec::new();
+    if cfg.auto != defaults.auto {
+        diff.push("auto".into());
+    }
+    if cfg.start_on != defaults.start_on {
+        diff.push("start_on".into());
+    }
+    if cfg.interval_secs != defaults.interval_secs {
+        diff.push("interval_secs".into());
+    }
+    if cfg.color.mode != defaults.color.mode {
+        diff.push("color.mode".into());
+    }
+    if cfg.color.theme != defaults.color.theme {
+        diff.push("color.theme".into());
+    }
+    if cfg.color.fg != defaults.color.fg {
+        diff.push("color.fg".into());
+    }
+    if !diff.is_empty() {
+        eprintln!(
+            "tray-idle-inhibitor: {}: применяю, отличается от значений по умолчанию: {}",
+            path.display(),
+            diff.join(", ")
+        );
+    }
+}
+
 fn config_file(dir: &Path) -> PathBuf {
     dir.join(APP).join("config.toml")
 }
@@ -147,7 +183,11 @@ fn user_file() -> PathBuf {
 pub fn load() -> Config {
     let mut cfg = Config::default();
     if let Some(path) = system_file() {
+        let before = cfg.clone();
         merge_file(&mut cfg, &path);
+        if cfg != before {
+            warn_if_differs_from_defaults(&cfg, &path);
+        }
     }
     let user = user_file();
     if user.is_file() {
