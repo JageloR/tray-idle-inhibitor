@@ -1,7 +1,7 @@
 # tray-idle-inhibitor
 
 Апплет системного трея (StatusNotifierItem) для labwc / LXQt на Wayland: не даёт
-системе уснуть, как модуль `idle_inhibitor` в Waybar, но без бара и без `matcha`.
+системе уснуть, как модуль `idle_inhibitor` в Waybar, но без бара.
 
 | Состояние | Иконка |
 |---|---|
@@ -30,8 +30,8 @@
 
 1. **wayland** — своя поверхность с прозрачным буфером 1×1 (`memfd`) и
    `zwp_idle_inhibit_manager_v1.create_inhibitor`.
-   wlroots учитывает инхибитор только для поверхности с привязанным буфером;
-   `matcha` создаёт пустую поверхность и поэтому его игнорируют.
+   wlroots учитывает инхибитор только для поверхности с привязанным буфером:
+   пустую поверхность без буфера он пропускает.
 2. **logind** — `org.freedesktop.login1.Manager.Inhibit("idle", …, "block")`.
    Блокировка живёт, пока открыт файловый дескриптор из ответа D-Bus.
    Именно этот инхибитор виден в `systemd-inhibit --list` и в `BlockInhibited`.
