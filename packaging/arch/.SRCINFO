@@ -9,7 +9,6 @@ pkgbase = tray-idle-inhibitor
 	license = MIT
 	makedepends = cargo
 	depends = gcc-libs
-	depends = glibc
 	optdepends = playerctl: автовключение инхибитора при воспроизведении медиа (--auto)
 	source = tray-idle-inhibitor-0.1.1.tar.gz::https://github.com/JageloR/tray-idle-inhibitor/archive/refs/tags/0.1.1.tar.gz
 	sha256sums = 2ac9c0aea1b157ee56d0ceda06d3d732099cfaa135ad53e8818ddc99a3de2cbd
