@@ -14,13 +14,22 @@
 
 ## [0.1.1] - 2026-11-26
 
-Сборка пакета: уточнён путь запуска в `.desktop` и место установки файла
-автозапуска.
+Сборка пакета: уточнён путь запуска в `.desktop`, место установки файла
+автозапуска, добавлен PKGBUILD для AUR.
+
+### Добавлено
+
+- `packaging/arch/`: `PKGBUILD`, `.SRCINFO`, `tray-idle-inhibitor.install`
+  (источник — тег 0.1.1). Установка: `/usr/bin/tray-idle-inhibitor`,
+  `/etc/xdg/tray-idle-inhibitor/config.toml`,
+  `/etc/xdg/autostart/tray-idle-inhibitor.desktop`, лицензия и документация
+  в `/usr/share`. `playerctl` — optdepends.
 
 ### Изменено
 
-- README: добавлен раздел «Связанные проекты» со ссылками на Waybar и
-  GNOME Caffeine.
+- `tray-idle-inhibitor.desktop`: `Exec=tray-idle-inhibitor --auto`.
+- README: `.desktop` ставится в `/etc/xdg/autostart/`; раздел «Связанные
+  проекты» со ссылками на Waybar и GNOME Caffeine.
 - CI не запускается на тегах: сборка идёт только на push в `main` и на
   pull request, чтобы тег не дублировал прогон.
 
