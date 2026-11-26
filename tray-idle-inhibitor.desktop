@@ -2,7 +2,7 @@
 Type=Application
 Name=Tray Idle Inhibitor
 Comment=Idle inhibitor (wayland + logind) in the system tray
-Exec=/usr/local/bin/tray-idle-inhibitor --auto
+Exec=tray-idle-inhibitor --auto
 Icon=coffee
 Terminal=false
 Categories=Utility;

@@ -194,7 +194,7 @@ cargo build --release
 ```bash
 sudo install -Dm755 target/release/tray-idle-inhibitor /usr/local/bin/tray-idle-inhibitor
 sudo install -Dm644 config.toml /etc/xdg/tray-idle-inhibitor/config.toml
-sudo install -Dm644 tray-idle-inhibitor.desktop /usr/local/share/applications/
+sudo install -Dm644 tray-idle-inhibitor.desktop /etc/xdg/autostart/
 ```
 
 Без установки можно запускать прямо из `target/release/`.
@@ -214,7 +214,7 @@ tray-idle-inhibitor --version
 Type=Application
 Name=Tray Idle Inhibitor
 Comment=Idle inhibitor in the system tray
-Exec=/usr/local/bin/tray-idle-inhibitor --auto
+Exec=tray-idle-inhibitor --auto
 Icon=coffee
 Terminal=false
 X-LXQt-Need-Tray=true
